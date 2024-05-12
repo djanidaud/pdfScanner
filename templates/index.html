@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Upload</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <h1>Upload a PDF</h1>
+    <input type="file" @change="onFileChange" accept=".pdf">
+    <button @click="submitFile">Upload</button>
+    <div v-if="waiting">Uploading and processing the file may take about 30-60 seconds. The UI looks frozen but stuff is happening in the background.</div>
+    <div v-if="uploadMessage">
+        <h2>Response:</h2>
+        <pre v-html="uploadMessage"></pre>
+    </div>
+</div>
+
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            selectedFile: null,
+            uploadMessage: null,
+            waiting: false
+        },
+        methods: {
+            onFileChange(event) {
+                this.selectedFile = event.target.files[0];
+            },
+            submitFile() {
+                this.waiting = true;
+                this.uploadMessage = null;
+
+                const formData = new FormData();
+                formData.append('file', this.selectedFile);
+                axios.post('/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then((response) => {
+                        this.uploadMessage = response.data.message;
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error.response.data);
+                        this.uploadMessage = error.response.data.error;
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>
