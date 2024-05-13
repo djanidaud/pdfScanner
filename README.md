@@ -1,6 +1,6 @@
-# Flask Application
+# PDF Scanner
 
-Welcome to the repository for our Flask application. This application utilizes OCR capabilities and integrates with OpenAI's API.
+This application utilizes OCR capabilities and integrates with OpenAI's API.
 
 ## Prerequisites
 
